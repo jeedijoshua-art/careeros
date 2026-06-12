@@ -1,0 +1,57 @@
+/* CareerOS App Shell Styles */
+
+.cos-app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--cos-bg);
+}
+
+.cos-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  /* Shift content over when sidebar is visible (desktop) */
+  margin-left: var(--cos-sidebar-width);
+}
+
+@media (max-width: 900px) {
+  .cos-main-content {
+    margin-left: 0;
+  }
+}
+
+.cos-app-layout {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.cos-pane-left {
+  flex: 1;
+  min-width: 400px;
+  max-width: 800px;
+  height: 100%;
+  border-right: 1px solid var(--cos-border);
+}
+
+.cos-pane-right {
+  flex: 1;
+  height: 100%;
+  background: var(--cos-bg-elevated);
+}
+
+@media (max-width: 1100px) {
+  .cos-app-layout {
+    flex-direction: column;
+  }
+  .cos-pane-left {
+    max-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--cos-border);
+  }
+}

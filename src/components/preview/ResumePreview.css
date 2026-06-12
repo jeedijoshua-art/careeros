@@ -1,0 +1,262 @@
+/* Resume Preview Styles */
+
+.cos-preview-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--cos-bg-elevated);
+  border-left: 1px solid var(--cos-border);
+}
+
+.cos-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  border-bottom: 1px solid var(--cos-border);
+}
+
+.cos-preview-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cos-preview-title h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.cos-preview-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  background: #1e1e1e; /* Darker backdrop to make paper pop */
+}
+
+/* 
+  A4 Paper Representation
+  Width: 210mm
+  Height: 297mm
+  Ratio: ~1.414
+*/
+.cos-paper {
+  width: 100%;
+  max-width: 800px; /* Fixed standard width for consistent preview */
+  min-height: 1131px; /* 800 * 1.414 */
+  background: #ffffff;
+  color: #1a1a1a;
+  padding: 48px; /* 1 inch approx */
+  box-shadow: var(--cos-shadow-lg);
+  border-radius: 2px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+}
+
+.cos-paper-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.cos-paper-name {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: #111;
+  letter-spacing: -0.02em;
+}
+
+.cos-paper-name.placeholder {
+  color: #a0a0a0;
+}
+
+.cos-paper-headline {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 8px;
+}
+
+.cos-paper-contact {
+  font-size: 11px;
+  color: #666;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.cos-paper-separator {
+  margin: 0 4px;
+  color: #ccc;
+}
+
+.cos-paper-section {
+  margin-bottom: 20px;
+}
+
+.cos-paper-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #222;
+  text-transform: uppercase;
+  margin: 0 0 6px 0;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 4px;
+  letter-spacing: 0.04em;
+}
+
+.cos-paper-text {
+  font-size: 12px;
+  color: #333;
+  margin: 0;
+  text-align: justify;
+}
+
+.cos-paper-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cos-paper-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cos-paper-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.cos-paper-item-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+}
+
+.cos-paper-item-date {
+  font-size: 11px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.cos-paper-item-subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  color: #444;
+}
+
+.cos-paper-item-link {
+  font-size: 11px;
+  color: #5588cc;
+}
+
+.cos-paper-item-gpa {
+  font-size: 11px;
+  color: #666;
+}
+
+.cos-paper-bullets {
+  margin: 4px 0 0 0;
+  padding-left: 18px;
+  font-size: 11.5px;
+  color: #333;
+}
+
+.cos-paper-bullets li {
+  margin-bottom: 3px;
+}
+
+.cos-paper-skills {
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cos-paper-skill-row {
+  line-height: 1.4;
+}
+
+.cos-paper-skill-row strong {
+  font-weight: 700;
+  color: #222;
+}
+
+/* Scale down preview on smaller screens */
+@media (max-width: 1400px) {
+  .cos-paper {
+    transform: scale(0.85);
+    transform-origin: top center;
+    margin-bottom: -15%; /* adjust for scaling */
+  }
+}
+
+@media (max-width: 1200px) {
+  .cos-paper {
+    transform: scale(0.7);
+    margin-bottom: -30%;
+  }
+}
+
+/* Empty & Loading States */
+.cos-preview-container.empty,
+.cos-preview-container.loading {
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.cos-preview-empty-state,
+.cos-preview-loading-state {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-width: 400px;
+}
+
+.cos-empty-icon {
+  font-size: 48px;
+  opacity: 0.5;
+  margin-bottom: 8px;
+}
+
+.cos-preview-empty-state h3,
+.cos-preview-loading-state h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--cos-text-primary);
+  margin: 0;
+}
+
+.cos-preview-empty-state p,
+.cos-preview-loading-state p {
+  font-size: 14px;
+  color: var(--cos-text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cos-spinner.large {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+  margin-bottom: 16px;
+}
+
+.cos-success-badge {
+  background: rgba(52, 211, 153, 0.1);
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 16px;
+  border: 1px solid rgba(52, 211, 153, 0.2);
+}

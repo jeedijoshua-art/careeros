@@ -1,0 +1,66 @@
+/* CareerOS Design Tokens — Premium Dark Theme */
+
+:root {
+  /* === Backgrounds === */
+  --cos-bg: #030303;
+  --cos-bg-elevated: #0a0a0a;
+  --cos-bg-surface: #111111;
+  --cos-bg-surface-hover: #1a1a1a;
+  --cos-bg-input: #0d0d0d;
+  --cos-bg-input-focus: #141414;
+
+  /* === Text === */
+  --cos-text-primary: #ffffff;
+  --cos-text-secondary: #a1a1aa;
+  --cos-text-tertiary: #71717a;
+  --cos-text-muted: #52525b;
+
+  /* === Accents === */
+  --cos-accent: #6ee7b7;
+  --cos-accent-hover: #86efac;
+  --cos-accent-muted: rgba(110, 231, 183, 0.15);
+  --cos-accent-subtle: rgba(110, 231, 183, 0.08);
+  --cos-accent-text: #03211a;
+
+  /* === Borders === */
+  --cos-border: rgba(255, 255, 255, 0.06);
+  --cos-border-strong: rgba(255, 255, 255, 0.12);
+  --cos-border-focus: rgba(110, 231, 183, 0.4);
+
+  /* === Shadows === */
+  --cos-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --cos-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --cos-shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.5);
+  --cos-shadow-glow: 0 0 20px rgba(110, 231, 183, 0.15);
+
+  /* === Glass === */
+  --cos-glass: blur(20px) saturate(150%);
+  --cos-glass-bg: rgba(10, 10, 10, 0.7);
+
+  /* === Sizes === */
+  --cos-sidebar-width: 260px;
+  --cos-topbar-height: 56px;
+  --cos-radius-sm: 6px;
+  --cos-radius-md: 10px;
+  --cos-radius-lg: 14px;
+  --cos-radius-xl: 20px;
+
+  /* === Status Colors === */
+  --cos-success: #34d399;
+  --cos-success-bg: rgba(52, 211, 153, 0.1);
+  --cos-warning: #fbbf24;
+  --cos-warning-bg: rgba(251, 191, 36, 0.1);
+  --cos-error: #f87171;
+  --cos-error-bg: rgba(248, 113, 113, 0.1);
+  --cos-info: #60a5fa;
+  --cos-info-bg: rgba(96, 165, 250, 0.1);
+
+  /* === Typography === */
+  --cos-font: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --cos-font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* === Transitions === */
+  --cos-transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --cos-transition-normal: 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  --cos-transition-slow: 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
