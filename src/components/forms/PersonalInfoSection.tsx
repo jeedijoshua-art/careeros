@@ -36,8 +36,13 @@ export const PersonalInfoSection: FC = () => {
                 value={state.resumeData.personalInfo.fullName}
                 onChange={handleChange}
                 placeholder="Jane Doe"
-                className="cos-input"
+                className={`cos-input ${state.errors['personalInfo.fullName'] ? 'cos-input-error' : ''}`}
               />
+              {state.errors['personalInfo.fullName'] && (
+                <span className="cos-validation-error-text">
+                  {state.errors['personalInfo.fullName']}
+                </span>
+              )}
             </div>
             <div className="cos-form-group">
               <label htmlFor="headline">Professional Headline</label>

@@ -47,8 +47,9 @@ export function generateResumePDF(data: ResumeData): jsPDF {
     doc.setFontSize(fontSize)
     doc.setTextColor(color[0], color[1], color[2])
     const lines = doc.splitTextToSize(text, CONTENT_WIDTH)
+    const needed = LINE_HEIGHT * lines.length
+    checkPageOverflow(needed)
     for (const line of lines) {
-      checkPageOverflow(LINE_HEIGHT)
       doc.text(line, MARGIN_LEFT, y)
       y += LINE_HEIGHT
     }
@@ -62,10 +63,13 @@ export function generateResumePDF(data: ResumeData): jsPDF {
     const bulletIndent = MARGIN_LEFT + 4
     const bulletWidth = CONTENT_WIDTH - 4
     const lines = doc.splitTextToSize(text, bulletWidth)
-    checkPageOverflow(LINE_HEIGHT)
+    
+    // Group characters and line outputs to prevent split lines on page boundaries
+    const needed = LINE_HEIGHT * lines.length
+    checkPageOverflow(needed)
+
     doc.text('•', MARGIN_LEFT, y)
     for (let i = 0; i < lines.length; i++) {
-      checkPageOverflow(LINE_HEIGHT)
       doc.text(lines[i], bulletIndent, y)
       y += LINE_HEIGHT
     }
@@ -73,7 +77,7 @@ export function generateResumePDF(data: ResumeData): jsPDF {
 
   // ===== NAME =====
   const { personalInfo } = data
-  if (personalInfo.fullName) {
+  if (personalInfo.fullName && personalInfo.fullName.trim()) {
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(20)
     doc.setTextColor(20, 20, 20)
@@ -82,7 +86,7 @@ export function generateResumePDF(data: ResumeData): jsPDF {
   }
 
   // ===== HEADLINE =====
-  if (personalInfo.headline) {
+  if (personalInfo.headline && personalInfo.headline.trim()) {
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(11)
     doc.setTextColor(80, 80, 80)
@@ -92,12 +96,12 @@ export function generateResumePDF(data: ResumeData): jsPDF {
 
   // ===== CONTACT LINE =====
   const contactParts: string[] = []
-  if (personalInfo.email) contactParts.push(personalInfo.email)
-  if (personalInfo.phone) contactParts.push(personalInfo.phone)
-  if (personalInfo.location) contactParts.push(personalInfo.location)
-  if (personalInfo.linkedin) contactParts.push(personalInfo.linkedin)
-  if (personalInfo.github) contactParts.push(personalInfo.github)
-  if (personalInfo.portfolio) contactParts.push(personalInfo.portfolio)
+  if (personalInfo.email && personalInfo.email.trim()) contactParts.push(personalInfo.email.trim())
+  if (personalInfo.phone && personalInfo.phone.trim()) contactParts.push(personalInfo.phone.trim())
+  if (personalInfo.location && personalInfo.location.trim()) contactParts.push(personalInfo.location.trim())
+  if (personalInfo.linkedin && personalInfo.linkedin.trim()) contactParts.push(personalInfo.linkedin.trim())
+  if (personalInfo.github && personalInfo.github.trim()) contactParts.push(personalInfo.github.trim())
+  if (personalInfo.portfolio && personalInfo.portfolio.trim()) contactParts.push(personalInfo.portfolio.trim())
 
   if (contactParts.length > 0) {
     doc.setFont('helvetica', 'normal')
@@ -105,6 +109,8 @@ export function generateResumePDF(data: ResumeData): jsPDF {
     doc.setTextColor(100, 100, 100)
     const contactLine = contactParts.join('  |  ')
     const contactLines = doc.splitTextToSize(contactLine, CONTENT_WIDTH)
+    const needed = 4.5 * contactLines.length + 2
+    checkPageOverflow(needed)
     for (const line of contactLines) {
       doc.text(line, MARGIN_LEFT, y)
       y += 4.5
@@ -113,18 +119,20 @@ export function generateResumePDF(data: ResumeData): jsPDF {
   }
 
   // ===== SUMMARY =====
-  if (personalInfo.summary) {
+  if (personalInfo.summary && personalInfo.summary.trim()) {
     addSectionHeader('Professional Summary')
     addText(personalInfo.summary, 9.5)
   }
 
   // ===== EXPERIENCE =====
-  if (data.experience.length > 0) {
+  const hasExperience = data.experience.length > 0 && data.experience.some(e => e.role?.trim() || e.company?.trim() || e.notes?.trim())
+  if (hasExperience) {
     addSectionHeader('Experience')
     for (const exp of data.experience) {
-      if (!exp.role && !exp.company) continue
+      if (!exp.role?.trim() && !exp.company?.trim() && !exp.notes?.trim()) continue
 
-      checkPageOverflow(15)
+      checkPageOverflow(18) // Ensure header text block fits
+      
       // Role and Company
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(10.5)
@@ -161,16 +169,17 @@ export function generateResumePDF(data: ResumeData): jsPDF {
   }
 
   // ===== PROJECTS =====
-  if (data.projects.length > 0) {
+  const hasProjects = data.projects.length > 0 && data.projects.some(p => p.name?.trim() || p.notes?.trim())
+  if (hasProjects) {
     addSectionHeader('Projects')
     for (const proj of data.projects) {
-      if (!proj.name) continue
+      if (!proj.name?.trim() && !proj.notes?.trim()) continue
 
-      checkPageOverflow(12)
+      checkPageOverflow(15)
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(10.5)
       doc.setTextColor(30, 30, 30)
-      let titleLine = proj.name
+      let titleLine = proj.name || 'Project Name'
       if (proj.technologies) titleLine += `  |  ${proj.technologies}`
       const titleLines = doc.splitTextToSize(titleLine, CONTENT_WIDTH)
       for (const line of titleLines) {
@@ -197,16 +206,17 @@ export function generateResumePDF(data: ResumeData): jsPDF {
   }
 
   // ===== EDUCATION =====
-  if (data.education.length > 0) {
+  const hasEducation = data.education.length > 0 && data.education.some(e => e.institution?.trim() || e.degree?.trim())
+  if (hasEducation) {
     addSectionHeader('Education')
     for (const edu of data.education) {
-      if (!edu.institution) continue
+      if (!edu.institution?.trim() && !edu.degree?.trim()) continue
 
-      checkPageOverflow(12)
+      checkPageOverflow(15)
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(10.5)
       doc.setTextColor(30, 30, 30)
-      doc.text(edu.institution, MARGIN_LEFT, y)
+      doc.text(edu.institution || 'Institution', MARGIN_LEFT, y)
 
       if (edu.graduationYear) {
         doc.setFont('helvetica', 'normal')
@@ -238,9 +248,13 @@ export function generateResumePDF(data: ResumeData): jsPDF {
   }
 
   // ===== SKILLS =====
-  if (data.skills.technical.length > 0 || data.skills.soft.length > 0) {
+  const hasSkills = data.skills.technical.some(s => s && s.trim()) || data.skills.soft.some(s => s && s.trim())
+  if (hasSkills) {
     addSectionHeader('Skills')
-    if (data.skills.technical.length > 0) {
+    
+    const techSkills = data.skills.technical.filter(s => s && s.trim())
+    if (techSkills.length > 0) {
+      checkPageOverflow(10)
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9.5)
       doc.setTextColor(30, 30, 30)
@@ -248,17 +262,24 @@ export function generateResumePDF(data: ResumeData): jsPDF {
       const techLabelWidth = doc.getTextWidth('Technical: ')
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(50, 50, 50)
-      const techText = data.skills.technical.join(', ')
+      const techText = techSkills.join(', ')
       const techLines = doc.splitTextToSize(techText, CONTENT_WIDTH - techLabelWidth)
+      
+      // Print first line with label
       doc.text(techLines[0], MARGIN_LEFT + techLabelWidth, y)
       y += LINE_HEIGHT
+      
+      // Print remaining wrapped lines
       for (let i = 1; i < techLines.length; i++) {
         checkPageOverflow(LINE_HEIGHT)
         doc.text(techLines[i], MARGIN_LEFT, y)
         y += LINE_HEIGHT
       }
     }
-    if (data.skills.soft.length > 0) {
+    
+    const softSkills = data.skills.soft.filter(s => s && s.trim())
+    if (softSkills.length > 0) {
+      checkPageOverflow(10)
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9.5)
       doc.setTextColor(30, 30, 30)
@@ -266,10 +287,14 @@ export function generateResumePDF(data: ResumeData): jsPDF {
       const softLabelWidth = doc.getTextWidth('Soft Skills: ')
       doc.setFont('helvetica', 'normal')
       doc.setTextColor(50, 50, 50)
-      const softText = data.skills.soft.join(', ')
+      const softText = softSkills.join(', ')
       const softLines = doc.splitTextToSize(softText, CONTENT_WIDTH - softLabelWidth)
+      
+      // Print first line with label
       doc.text(softLines[0], MARGIN_LEFT + softLabelWidth, y)
       y += LINE_HEIGHT
+      
+      // Print remaining wrapped lines
       for (let i = 1; i < softLines.length; i++) {
         checkPageOverflow(LINE_HEIGHT)
         doc.text(softLines[i], MARGIN_LEFT, y)
@@ -279,10 +304,11 @@ export function generateResumePDF(data: ResumeData): jsPDF {
   }
 
   // ===== CERTIFICATIONS =====
-  if (data.certifications.length > 0) {
+  const hasCertifications = data.certifications.length > 0 && data.certifications.some(c => c.name?.trim())
+  if (hasCertifications) {
     addSectionHeader('Certifications')
     for (const cert of data.certifications) {
-      if (!cert.name) continue
+      if (!cert.name?.trim()) continue
       checkPageOverflow(8)
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(9.5)
@@ -300,6 +326,16 @@ export function generateResumePDF(data: ResumeData): jsPDF {
       }
       y += 6
     }
+  }
+
+  // Add Page Numbers at the bottom center of all pages
+  const pageCount = doc.getNumberOfPages()
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(8)
+    doc.setTextColor(150, 150, 150)
+    doc.text(`Page ${i} of ${pageCount}`, PAGE_WIDTH / 2, 287, { align: 'center' })
   }
 
   return doc

@@ -52,7 +52,7 @@
   padding: 48px; /* 1 inch approx */
   box-shadow: var(--cos-shadow-lg);
   border-radius: 2px;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: var(--cos-font);
   line-height: 1.5;
 }
 
@@ -188,8 +188,8 @@
   color: #222;
 }
 
-/* Scale down preview on smaller screens */
-@media (max-width: 1400px) {
+/* Scale down preview on tablet/desktop scaling screens */
+@media (min-width: 901px) and (max-width: 1400px) {
   .cos-paper {
     transform: scale(0.85);
     transform-origin: top center;
@@ -197,10 +197,27 @@
   }
 }
 
-@media (max-width: 1200px) {
+@media (min-width: 901px) and (max-width: 1200px) {
   .cos-paper {
     transform: scale(0.7);
     margin-bottom: -30%;
+  }
+}
+
+/* Mobile Responsiveness under 900px (stacks vertically) */
+@media (max-width: 900px) {
+  .cos-paper {
+    transform: none !important;
+    margin-bottom: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding: 24px !important;
+  }
+  .cos-preview-scroll-area {
+    padding: 0 !important;
+    background: #ffffff !important; /* Blend seamlessly with paper */
   }
 }
 
@@ -259,4 +276,65 @@
   padding: 4px 10px;
   border-radius: 16px;
   border: 1px solid rgba(52, 211, 153, 0.2);
+}
+
+/* Loading checklist styles */
+.cos-loading-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  margin-top: 16px;
+  text-align: left;
+  width: 100%;
+  padding-left: 20px;
+}
+
+.cos-loading-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  transition: all var(--cos-transition-normal);
+}
+
+.cos-loading-step.pending {
+  color: var(--cos-text-muted);
+  opacity: 0.45;
+}
+
+.cos-loading-step.active {
+  color: var(--cos-text-primary);
+  font-weight: 500;
+}
+
+.cos-loading-step.active .cos-step-bullet {
+  color: var(--cos-accent);
+  animation: pulse-glow 1s infinite alternate;
+}
+
+.cos-loading-step.completed {
+  color: var(--cos-text-secondary);
+}
+
+.cos-loading-step.completed .cos-step-bullet {
+  color: var(--cos-success);
+}
+
+.cos-step-bullet {
+  font-size: 12px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+@keyframes pulse-glow {
+  from {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.15);
+  }
 }

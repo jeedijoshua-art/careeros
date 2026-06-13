@@ -1,4 +1,4 @@
-import { type FC } from 'react'
+import { type FC, useState, useEffect } from 'react'
 import { useResume } from '../../context/ResumeContext'
 import { downloadResumePDF } from '../../services/pdfService'
 import './ResumePreview.css'
@@ -6,6 +6,25 @@ import './ResumePreview.css'
 export const ResumePreview: FC = () => {
   const { state } = useResume()
   const { generatedResume, generationStatus } = state
+
+  const [loadingStep, setLoadingStep] = useState(0)
+  const loadingMessages = [
+    '🤖 Understanding your profile…',
+    '📝 Writing ATS-optimized content…',
+    '🎯 Tailoring for your target role…',
+    '✨ Building your professional resume…'
+  ]
+
+  useEffect(() => {
+    if (generationStatus !== 'generating') {
+      setLoadingStep(0)
+      return
+    }
+    const timer = setInterval(() => {
+      setLoadingStep((prev) => (prev < loadingMessages.length - 1 ? prev + 1 : prev))
+    }, 2000)
+    return () => clearInterval(timer)
+  }, [generationStatus])
 
   const handleDownload = () => {
     if (!generatedResume) return
@@ -22,8 +41,7 @@ export const ResumePreview: FC = () => {
       <div className="cos-preview-container empty">
         <div className="cos-preview-empty-state">
           <div className="cos-empty-icon">📄</div>
-          <h3>Ready to build your resume?</h3>
-          <p>Complete your information and click <strong>Generate Professional Resume</strong>.</p>
+          <p className="cos-empty-text">Complete your information and click Generate Professional Resume.</p>
         </div>
       </div>
     )
@@ -35,8 +53,23 @@ export const ResumePreview: FC = () => {
       <div className="cos-preview-container loading">
         <div className="cos-preview-loading-state">
           <div className="cos-spinner large"></div>
-          <h3>Generating ATS-Optimized Resume...</h3>
-          <p>Gemini AI is analyzing and enhancing your career data.</p>
+          <h3>AI Assistant Working</h3>
+          <div className="cos-loading-steps">
+            {loadingMessages.map((msg, idx) => {
+              let status = 'pending'
+              if (loadingStep > idx) status = 'completed'
+              else if (loadingStep === idx) status = 'active'
+
+              return (
+                <div key={idx} className={`cos-loading-step ${status}`}>
+                  <span className="cos-step-bullet">
+                    {status === 'completed' ? '✓' : status === 'active' ? '●' : '○'}
+                  </span>
+                  <span className="cos-step-text">{msg}</span>
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
     )
@@ -46,13 +79,19 @@ export const ResumePreview: FC = () => {
 
   const { personalInfo, experience, education, skills, projects, certifications } = generatedResume
 
-  // A4 aspect ratio 1:1.414
+  const hasSummary = Boolean(personalInfo.summary && personalInfo.summary.trim())
+  const hasExperience = experience.length > 0 && experience.some(e => e.role?.trim() || e.company?.trim() || e.notes?.trim())
+  const hasProjects = projects.length > 0 && projects.some(p => p.name?.trim() || p.notes?.trim())
+  const hasEducation = education.length > 0 && education.some(e => e.institution?.trim() || e.degree?.trim())
+  const hasSkills = skills.technical.some(s => s && s.trim()) || skills.soft.some(s => s && s.trim())
+  const hasCertifications = certifications.length > 0 && certifications.some(c => c.name?.trim())
+
   return (
     <div className="cos-preview-container">
       <div className="cos-preview-header">
         <div className="cos-preview-title">
           <h2>Live Preview</h2>
-          {generationStatus === 'success' && <span className="cos-success-badge">✓ Generated Successfully</span>}
+          {generationStatus === 'success' && <span className="cos-success-badge">✅ Resume Generated Successfully</span>}
         </div>
         <button className="lp-btn primary" onClick={handleDownload}>
           Download PDF
@@ -92,7 +131,7 @@ export const ResumePreview: FC = () => {
           </div>
 
           {/* Summary */}
-          {personalInfo.summary && (
+          {hasSummary && (
             <div className="cos-paper-section">
               <h2 className="cos-paper-section-title">Professional Summary</h2>
               <p className="cos-paper-text">{personalInfo.summary}</p>
@@ -100,16 +139,16 @@ export const ResumePreview: FC = () => {
           )}
 
           {/* Experience */}
-          {experience.length > 0 && experience.some(e => e.role || e.company) && (
+          {hasExperience && (
             <div className="cos-paper-section">
               <h2 className="cos-paper-section-title">Experience</h2>
               <div className="cos-paper-list">
                 {experience.map((exp, i) => {
-                  if (!exp.role && !exp.company) return null
+                  if (!exp.role?.trim() && !exp.company?.trim() && !exp.notes?.trim()) return null
                   return (
                     <div key={exp.id || i} className="cos-paper-item">
                       <div className="cos-paper-item-header">
-                        <div className="cos-paper-item-title">{exp.role}</div>
+                        <div className="cos-paper-item-title">{exp.role || 'Role'}</div>
                         <div className="cos-paper-item-date">
                           {[exp.startDate, exp.current ? 'Present' : exp.endDate].filter(Boolean).join(' – ')}
                         </div>
@@ -131,17 +170,17 @@ export const ResumePreview: FC = () => {
           )}
 
           {/* Projects */}
-          {projects.length > 0 && projects.some(p => p.name) && (
+          {hasProjects && (
             <div className="cos-paper-section">
               <h2 className="cos-paper-section-title">Projects</h2>
               <div className="cos-paper-list">
                 {projects.map((proj, i) => {
-                  if (!proj.name) return null
+                  if (!proj.name?.trim() && !proj.notes?.trim()) return null
                   return (
                     <div key={proj.id || i} className="cos-paper-item">
                       <div className="cos-paper-item-header">
                         <div className="cos-paper-item-title">
-                          {proj.name}
+                          {proj.name || 'Project Name'}
                           {proj.technologies && <span style={{ fontWeight: 'normal' }}> | {proj.technologies}</span>}
                         </div>
                       </div>
@@ -162,16 +201,16 @@ export const ResumePreview: FC = () => {
           )}
 
           {/* Education */}
-          {education.length > 0 && education.some(e => e.institution) && (
+          {hasEducation && (
             <div className="cos-paper-section">
               <h2 className="cos-paper-section-title">Education</h2>
               <div className="cos-paper-list">
                 {education.map((edu, i) => {
-                  if (!edu.institution) return null
+                  if (!edu.institution?.trim() && !edu.degree?.trim()) return null
                   return (
                     <div key={edu.id || i} className="cos-paper-item">
                       <div className="cos-paper-item-header">
-                        <div className="cos-paper-item-title">{edu.institution}</div>
+                        <div className="cos-paper-item-title">{edu.institution || 'Institution'}</div>
                         <div className="cos-paper-item-date">{edu.graduationYear}</div>
                       </div>
                       {edu.degree && (
@@ -188,18 +227,18 @@ export const ResumePreview: FC = () => {
           )}
 
           {/* Skills */}
-          {(skills.technical.length > 0 || skills.soft.length > 0) && (
+          {hasSkills && (
             <div className="cos-paper-section">
               <h2 className="cos-paper-section-title">Skills</h2>
               <div className="cos-paper-skills">
-                {skills.technical.length > 0 && (
+                {skills.technical.some(s => s && s.trim()) && (
                   <div className="cos-paper-skill-row">
-                    <strong>Technical:</strong> {skills.technical.join(', ')}
+                    <strong>Technical:</strong> {skills.technical.filter(s => s && s.trim()).join(', ')}
                   </div>
                 )}
-                {skills.soft.length > 0 && (
+                {skills.soft.some(s => s && s.trim()) && (
                   <div className="cos-paper-skill-row">
-                    <strong>Soft Skills:</strong> {skills.soft.join(', ')}
+                    <strong>Soft Skills:</strong> {skills.soft.filter(s => s && s.trim()).join(', ')}
                   </div>
                 )}
               </div>
@@ -207,12 +246,12 @@ export const ResumePreview: FC = () => {
           )}
 
           {/* Certifications */}
-          {certifications.length > 0 && certifications.some(c => c.name) && (
+          {hasCertifications && (
             <div className="cos-paper-section">
               <h2 className="cos-paper-section-title">Certifications</h2>
               <div className="cos-paper-list">
                 {certifications.map((cert, i) => {
-                  if (!cert.name) return null
+                  if (!cert.name?.trim()) return null
                   return (
                     <div key={cert.id || i} className="cos-paper-item certification-item">
                       <div className="cos-paper-item-header">

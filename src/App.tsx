@@ -9,7 +9,7 @@ function App() {
   const [activeView, setActiveView] = useState<'landing' | 'app'>('landing')
 
   return (
-    <div className="cos-app-container">
+    <div className={`cos-app-container ${activeView === 'landing' ? 'landing-view' : ''}`}>
       {activeView === 'landing' ? (
         <LandingPage onLaunch={() => setActiveView('app')} />
       ) : (

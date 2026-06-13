@@ -8,6 +8,9 @@ interface ResumeState {
   atsScore: ATSScore | null
   aiProcessing: AIProcessingState
   isDirty: boolean
+  errors: Record<string, string>
+  validationError: string | null
+  apiError: string | null
 }
 
 type ResumeAction =
@@ -18,6 +21,9 @@ type ResumeAction =
   | { type: 'SET_ATS_SCORE'; payload: ATSScore | null }
   | { type: 'SET_AI_PROCESSING'; payload: { key: string; value: boolean } }
   | { type: 'RESET' }
+  | { type: 'SET_VALIDATION_ERRORS'; payload: { errors: Record<string, string>; validationError: string | null } }
+  | { type: 'CLEAR_VALIDATION_ERROR'; payload: string }
+  | { type: 'SET_API_ERROR'; payload: string | null }
 
 const STORAGE_KEY = 'careeros_resume_data'
 
@@ -71,7 +77,6 @@ function loadFromStorage(): StorageData {
       let generatedResume = defaults.generatedResume
       let generationStatus = defaults.generationStatus
 
-      // Migration: if the stored object has careerTarget directly, it's the old ResumeData format
       if (parsed.careerTarget) {
         resumeData = migrateResumeData(parsed)
       } else {
@@ -106,7 +111,6 @@ function saveToStorage(state: ResumeState) {
   }
 }
 
-// Deep set a nested path like "personalInfo.fullName"
 function deepSet(obj: Record<string, unknown>, path: string, value: unknown): Record<string, unknown> {
   const keys = path.split('.')
   const result = { ...obj }
@@ -136,7 +140,33 @@ function resumeReducer(state: ResumeState, action: ResumeAction): ResumeState {
         action.payload.path,
         action.payload.value
       ) as unknown as ResumeData
-      return { ...state, resumeData: updated, isDirty: true }
+      
+      const path = action.payload.path
+      const newErrors = { ...state.errors }
+      delete newErrors[path]
+      
+      if (
+        path === 'personalInfo.summary' ||
+        path.startsWith('experience') ||
+        path.startsWith('projects') ||
+        path.startsWith('skills')
+      ) {
+        delete newErrors['resumeContent']
+      }
+      
+      let validationError = state.validationError
+      if (Object.keys(newErrors).length === 0) {
+        validationError = null
+      }
+      
+      return { 
+        ...state, 
+        resumeData: updated, 
+        isDirty: true, 
+        errors: newErrors,
+        validationError,
+        apiError: null
+      }
     }
     case 'SET_GENERATED_RESUME':
       return { ...state, generatedResume: action.payload, isDirty: true }
@@ -150,7 +180,34 @@ function resumeReducer(state: ResumeState, action: ResumeAction): ResumeState {
         aiProcessing: { ...state.aiProcessing, [action.payload.key]: action.payload.value }
       }
     case 'RESET':
-      return { ...state, resumeData: createEmptyResume(), generatedResume: null, generationStatus: 'idle', atsScore: null, isDirty: false }
+      return { 
+        ...state, 
+        resumeData: createEmptyResume(), 
+        generatedResume: null, 
+        generationStatus: 'idle', 
+        atsScore: null, 
+        isDirty: false,
+        errors: {},
+        validationError: null,
+        apiError: null
+      }
+    case 'SET_VALIDATION_ERRORS':
+      return { 
+        ...state, 
+        errors: action.payload.errors, 
+        validationError: action.payload.validationError 
+      }
+    case 'CLEAR_VALIDATION_ERROR': {
+      const newErrors = { ...state.errors }
+      delete newErrors[action.payload]
+      let validationError = state.validationError
+      if (Object.keys(newErrors).length === 0) {
+        validationError = null
+      }
+      return { ...state, errors: newErrors, validationError }
+    }
+    case 'SET_API_ERROR':
+      return { ...state, apiError: action.payload }
     default:
       return state
   }
@@ -165,6 +222,9 @@ interface ResumeContextType {
   setGenerationStatus: (status: GenerationStatus) => void
   setAIProcessing: (key: string, value: boolean) => void
   resetResume: () => void
+  setValidationErrors: (errors: Record<string, string>, validationError: string | null) => void
+  clearValidationError: (key: string) => void
+  setAPIError: (apiError: string | null) => void
 }
 
 const ResumeContext = createContext<ResumeContextType | null>(null)
@@ -177,7 +237,10 @@ export const ResumeProvider: FC<{ children: ReactNode }> = ({ children }) => {
     generationStatus: initialData.generationStatus,
     atsScore: null,
     aiProcessing: {},
-    isDirty: false
+    isDirty: false,
+    errors: {},
+    validationError: null,
+    apiError: null
   })
 
   // Auto-save to localStorage
@@ -213,6 +276,18 @@ export const ResumeProvider: FC<{ children: ReactNode }> = ({ children }) => {
     dispatch({ type: 'RESET' })
   }
 
+  const setValidationErrors = (errors: Record<string, string>, validationError: string | null) => {
+    dispatch({ type: 'SET_VALIDATION_ERRORS', payload: { errors, validationError } })
+  }
+
+  const clearValidationError = (key: string) => {
+    dispatch({ type: 'CLEAR_VALIDATION_ERROR', payload: key })
+  }
+
+  const setAPIError = (apiError: string | null) => {
+    dispatch({ type: 'SET_API_ERROR', payload: apiError })
+  }
+
   return (
     <ResumeContext.Provider value={{ 
       state, 
@@ -222,7 +297,10 @@ export const ResumeProvider: FC<{ children: ReactNode }> = ({ children }) => {
       setGeneratedResume,
       setGenerationStatus,
       setAIProcessing, 
-      resetResume 
+      resetResume,
+      setValidationErrors,
+      clearValidationError,
+      setAPIError
     }}>
       {children}
     </ResumeContext.Provider>

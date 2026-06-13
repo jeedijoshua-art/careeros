@@ -55,3 +55,11 @@
     border-bottom: 1px solid var(--cos-border);
   }
 }
+
+.cos-app-container.landing-view {
+  display: block;
+  height: auto;
+  min-height: 100vh;
+  width: 100%;
+  overflow: visible;
+}

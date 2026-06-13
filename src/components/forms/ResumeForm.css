@@ -416,3 +416,59 @@
   border-radius: var(--cos-radius-sm);
   text-align: center;
 }
+
+.cos-generation-success {
+  color: var(--cos-success);
+  font-size: 14px;
+  background: var(--cos-success-bg);
+  border: 1px solid rgba(52, 211, 153, 0.15);
+  padding: 10px 20px;
+  border-radius: var(--cos-radius-md);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  font-weight: 500;
+}
+
+.cos-input-error {
+  border-color: var(--cos-error) !important;
+}
+
+.cos-input-error:focus {
+  border-color: var(--cos-error) !important;
+  box-shadow: 0 0 0 2px var(--cos-error-bg) !important;
+}
+
+.cos-validation-error-text {
+  color: var(--cos-error);
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 4px;
+  display: block;
+}
+
+.cos-validation-error-banner {
+  color: var(--cos-error);
+  font-size: 14px;
+  background: var(--cos-error-bg);
+  border: 1px solid rgba(248, 113, 113, 0.15);
+  padding: 10px 20px;
+  border-radius: var(--cos-radius-md);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .cos-resume-form {
+    padding: 16px;
+  }
+  .cos-form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .cos-form-header h2 {
+    font-size: 20px;
+  }
+}

@@ -8,7 +8,7 @@ function getModel() {
     throw new Error('Gemini API key not configured. Add VITE_GEMINI_API_KEY to your .env file.')
   }
   const genAI = new GoogleGenerativeAI(API_KEY)
-  return genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+  return genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 }
 
 async function generateContent(prompt: string): Promise<string> {

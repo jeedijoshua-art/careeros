@@ -1,6 +1,6 @@
 import { type FC } from 'react'
 import { motion } from 'framer-motion'
-import { APP_NAME, COMING_SOON_FEATURES } from '../config/constants'
+import { APP_NAME } from '../config/constants'
 import './LandingPage.css'
 
 interface LandingPageProps {
@@ -19,34 +19,34 @@ const stagger = {
 
 const features = [
   {
-    icon: '📤',
-    title: 'Resume Parsing',
-    desc: 'Upload an existing PDF and auto-extract your experience, skills, education, and projects.'
-  },
-  {
-    icon: '🎯',
-    title: 'Smart Skill Recommendations',
-    desc: 'Enter your target role and receive curated skill suggestions with one-click insertion.'
-  },
-  {
-    icon: '✨',
-    title: 'AI Enhancement',
-    desc: 'Transform rough notes into polished ATS-ready bullets using action verbs and the XYZ formula.'
-  },
-  {
-    icon: '📝',
-    title: 'Project Description Generator',
-    desc: 'Provide a project name and technologies — get a professional description instantly.'
+    icon: '🤖',
+    title: 'AI Resume Builder',
+    desc: 'Complete editor to draft and structure all resume details with real-time optimization suggestions.'
   },
   {
     icon: '🔍',
     title: 'ATS Optimization',
-    desc: 'Compare your resume against a job description and get keyword alignment analysis.'
+    desc: 'Compare your resume against a job description to get keyword alignment analysis and matching metrics.'
+  },
+  {
+    icon: '📤',
+    title: 'Resume Parsing',
+    desc: 'Upload an existing PDF resume to automatically extract experience, skills, projects, and education.'
+  },
+  {
+    icon: '✨',
+    title: 'AI Enhancement',
+    desc: 'Transform rough notes into polished, impact-driven bullet points using standard recruiter patterns.'
   },
   {
     icon: '📄',
+    title: 'Live Preview',
+    desc: 'See changes rendered in real-time on a standard, clean recruiter-friendly layout.'
+  },
+  {
+    icon: '💾',
     title: 'PDF Export',
-    desc: 'Generate text-based, searchable, ATS-compatible PDFs with professional formatting.'
+    desc: 'Generate text-based, searchable, standard ATS-friendly PDF documents with a single click.'
   }
 ]
 
@@ -76,7 +76,9 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
           </div>
           <div className="lp-nav-links">
             <a href="#features" className="lp-nav-link">Features</a>
+            <a href="#how-it-works" className="lp-nav-link">How It Works</a>
             <a href="#roadmap" className="lp-nav-link">Roadmap</a>
+            <a href="#faq" className="lp-nav-link">FAQ</a>
           </div>
           <motion.button
             whileHover={{ scale: 1.04, y: -2 }}
@@ -98,11 +100,11 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
             </motion.div>
 
             <motion.h1 variants={fadeUp} className="lp-hero-title">
-              Build Better Resumes.<br />Land Better Opportunities.
+              Build ATS-Optimized Resumes That Get Interviews.
             </motion.h1>
 
             <motion.p variants={fadeUp} className="lp-hero-subtitle">
-              CareerOS transforms your rough career notes into polished, ATS-optimized resumes with AI-powered enhancement, smart skill recommendations, and professional PDF export.
+              Transform rough career notes into professional resumes using AI-powered writing, ATS optimization, resume parsing, and instant PDF export.
             </motion.p>
 
             <motion.div variants={fadeUp} className="lp-hero-actions">
@@ -112,10 +114,10 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
                 className="lp-btn primary"
                 onClick={onLaunch}
               >
-                Start Building Your Resume
+                Build My Resume
               </motion.button>
               <motion.a
-                whileHover={{ scale: 1.04 }}
+                whileHover={{ scale: 1.04, y: -3 }}
                 whileTap={{ scale: 0.96 }}
                 href="#features"
                 className="lp-btn secondary"
@@ -125,20 +127,11 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
             </motion.div>
 
             <motion.div variants={fadeUp} className="lp-hero-stats">
-              <div className="lp-stat">
-                <span className="lp-stat-value">6</span>
-                <span className="lp-stat-label">AI Features</span>
-              </div>
+              <div className="lp-stat-item">AI Powered</div>
               <div className="lp-stat-divider" />
-              <div className="lp-stat">
-                <span className="lp-stat-value">ATS</span>
-                <span className="lp-stat-label">Optimized</span>
-              </div>
+              <div className="lp-stat-item">ATS Optimized</div>
               <div className="lp-stat-divider" />
-              <div className="lp-stat">
-                <span className="lp-stat-value">PDF</span>
-                <span className="lp-stat-label">Export</span>
-              </div>
+              <div className="lp-stat-item">PDF Export</div>
             </motion.div>
           </motion.div>
         </div>
@@ -155,7 +148,7 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
             variants={fadeUp}
           >
             <span className="lp-eyebrow">Core Features</span>
-            <h2 className="lp-section-title">Everything You Need to Stand Out</h2>
+            <h2 className="lp-section-title">Everything You Need To Build A Better Resume</h2>
             <p className="lp-section-desc">
               From resume parsing to ATS optimization — CareerOS handles every step of crafting a winning resume.
             </p>
@@ -180,7 +173,7 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
       </section>
 
       {/* How It Works */}
-      <section className="lp-section lp-section-alt">
+      <section id="how-it-works" className="lp-section lp-section-alt">
         <div className="lp-section-inner">
           <motion.div
             className="lp-section-header"
@@ -240,7 +233,13 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
             viewport={{ once: true, margin: '-80px' }}
             variants={stagger}
           >
-            {COMING_SOON_FEATURES.map((f, i) => (
+            {[
+              { name: 'Cover Letter Generator', icon: '✉️', description: 'AI-powered cover letters tailored to each application' },
+              { name: 'Interview Prep', icon: '🎙️', description: 'Practice with AI-generated interview questions' },
+              { name: 'LinkedIn Optimizer', icon: '💼', description: 'Optimize your LinkedIn profile for visibility' },
+              { name: 'Career Roadmap', icon: '🗺️', description: 'Plan your career trajectory with AI insights' },
+              { name: 'Application Tracker', icon: '📊', description: 'Track and manage all your job applications' }
+            ].map((f, i) => (
               <motion.div key={i} variants={fadeUp} className="lp-roadmap-card">
                 <div className="lp-roadmap-icon">{f.icon}</div>
                 <div className="lp-roadmap-info">
@@ -248,6 +247,45 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
                   <p>{f.description}</p>
                 </div>
                 <span className="lp-roadmap-badge">Coming Soon</span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="lp-section lp-section-alt">
+        <div className="lp-section-inner">
+          <motion.div
+            className="lp-section-header"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            variants={fadeUp}
+          >
+            <span className="lp-eyebrow">FAQ</span>
+            <h2 className="lp-section-title">Frequently Asked Questions</h2>
+            <p className="lp-section-desc">
+              Have questions about CareerOS? Find quick answers below.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="lp-faq-grid"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            variants={stagger}
+          >
+            {[
+              { q: 'How does the AI Resume Generator work?', a: 'CareerOS uses Gemini 2.5 to analyze your rough notes and rewrite them into professional, achievement-oriented bullet points matching the target job.' },
+              { q: 'Is the generated PDF compatible with Applicant Tracking Systems (ATS)?', a: 'Yes. The exported PDF is text-based, fully searchable, and structured according to standard recruiter guidelines, making it 100% ATS-friendly.' },
+              { q: 'Can I upload an existing resume to get started?', a: 'Absolutely. You can upload your current resume in PDF format, and our parser will automatically extract and populate your details.' },
+              { q: 'Is CareerOS free to use?', a: 'Yes, CareerOS V1 is free to use with your own Gemini API key configured in the application.' }
+            ].map((faq, i) => (
+              <motion.div key={i} variants={fadeUp} className="lp-faq-card">
+                <h4 className="lp-faq-question">{faq.q}</h4>
+                <p className="lp-faq-answer">{faq.a}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -272,7 +310,7 @@ export const LandingPage: FC<LandingPageProps> = ({ onLaunch }) => {
               className="lp-btn primary lg"
               onClick={onLaunch}
             >
-              Launch Resume Generator
+              Build My Resume
             </motion.button>
           </motion.div>
         </div>

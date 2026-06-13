@@ -37,8 +37,13 @@ export const CareerTargetSection: FC = () => {
                 value={state.resumeData.careerTarget.targetJobTitle}
                 onChange={handleChange}
                 placeholder="e.g. Senior Frontend Engineer"
-                className="cos-input"
+                className={`cos-input ${state.errors['careerTarget.targetJobTitle'] ? 'cos-input-error' : ''}`}
               />
+              {state.errors['careerTarget.targetJobTitle'] && (
+                <span className="cos-validation-error-text">
+                  {state.errors['careerTarget.targetJobTitle']}
+                </span>
+              )}
             </div>
             <div className="cos-form-group">
               <label htmlFor="experienceLevel">Experience Level</label>
